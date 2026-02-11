@@ -4,7 +4,9 @@
 <!-- TODO: Add pub.dev version badge once published -->
 <!-- TODO: Add build status badge if CI is set up -->
 
-A Flutter plugin to integrate the native NuggetSDK for iOS, enabling features like native chat UI, authentication callbacks, push notification handling, and UI customization within a Flutter application.
+A Flutter plugin to integrate the native NuggetSDK for iOS and Android, enabling features like native chat UI, authentication callbacks, push notification handling, and UI customization within a Flutter application.
+
+**For example implementation please refer `example/lib/main.dart` file**
 
 ## Features
 
@@ -16,10 +18,14 @@ A Flutter plugin to integrate the native NuggetSDK for iOS, enabling features li
 *   Receive callbacks for ticket creation success/failure (`onTicketCreationSucceeded`, `onTicketCreationFailed`).
 *   Customize the native UI theme and fonts via Dart (`NuggetThemeData`, `NuggetFontData`).
 
-## Platform Support
-
-*   **iOS:** Supported
-*   **Android:** Not yet implemented
+## Platform Requirements
+ * Flutter Version > 3.3.4
+ * iOS version >= 14.0
+ * Android
+     * Android compilesdkVersion >= 35
+     * AGP version >= 8.2.0
+     * Kotlin >= 1.8.20
+     * Gradle-wrapper.properties gradle version >= 8.3
 
 ## Installation
 
@@ -29,7 +35,12 @@ A Flutter plugin to integrate the native NuggetSDK for iOS, enabling features li
     dependencies:
       flutter:
         sdk: flutter
-      nugget_flutter_plugin: ^0.0.1 # Replace with the actual version or path/git dependency
+      nugget_flutter_plugin:
+        git:
+          url: https://github.com/Zomato-Nugget/nugget-flutter-plugin
+          ref: 0.0.4  # Using the specific release tag
+          path: nugget_flutter_plugin  
+          ........
     ```
 
 2.  **iOS Setup (Crucial):** The native `NuggetSDK` is distributed via Swift Package Manager (SPM). You need to declare this dependency in your **consuming Flutter application's** `ios/Podfile`.
