@@ -11,6 +11,7 @@ public class NuggetFlutterPlugin: NSObject, FlutterPlugin {
     private var customFontProviderDelegate: NuggetFontProviderDelegate?
     private var businessContextProviderDelegate: NuggetBusinessContextProviderDelegate?
     private var ticketCreationDelegate: NuggetTicketCreationDelegate?
+    private var pendingClientInterfaceStyle: UIUserInterfaceStyle?
     
     private static var instance: NuggetFlutterPlugin?
     
@@ -49,10 +50,10 @@ public class NuggetFlutterPlugin: NSObject, FlutterPlugin {
             handleOpenChatWithCustomDeeplink(call: call, result: result)
         case "syncFCMToken":
             handleSyncFCMToken(call: call, result: result)
-        case "sendCurrentDarkThemeStatus":
+        case "clientDarkThemeStatus":
             clientDarkThemeStatus(call: call, result: result)
         case "accessTokenResponse":
-            break
+            result(nil)
         default:
             result(FlutterMethodNotImplemented)
         }
@@ -88,6 +89,11 @@ public class NuggetFlutterPlugin: NSObject, FlutterPlugin {
             customThemeProviderDelegate = NuggetFluterThemeProviderImp(themeData: themeData)
         } else {
             customThemeProviderDelegate = nil
+        }
+        
+        if let pendingStyle = pendingClientInterfaceStyle,
+           let themeProvider = customThemeProviderDelegate as? NuggetFluterThemeProviderImp {
+            themeProvider.updateDeviceInterfaceStyle(pendingStyle)
         }
         
         if let arguments = call.arguments as? [String: Any],
@@ -186,10 +192,23 @@ public class NuggetFlutterPlugin: NSObject, FlutterPlugin {
         let isNotificationsEnabled = args["notifsEnabled"] as? Bool ?? false
         self.notificationDelegate?.tokenUpdated(to: token)
         self.notificationDelegate?.permissionStatusUpdated(to: isNotificationsEnabled ? .authorized : .denied)
+        result(nil)
     }
 
     private func clientDarkThemeStatus(call: FlutterMethodCall, result: @escaping FlutterResult) { 
-        return
+        guard let args = call.arguments as? [String: Any] else {
+            result(FlutterError(code: "INVALID_ARGS", message: "Missing required arguments for clientDarkThemeStatus", details: nil))
+            return
+        }
+        let isDarkThemeEnabled = args["darkThemeEnabled"] as? Bool ?? false
+        let interfaceStyle: UIUserInterfaceStyle = isDarkThemeEnabled ? .dark : .light
+        
+        if let themeProvider = customThemeProviderDelegate as? NuggetFluterThemeProviderImp {
+            themeProvider.updateDeviceInterfaceStyle(interfaceStyle)
+        } else {
+            pendingClientInterfaceStyle = interfaceStyle
+        }
+        
+        result(nil)
     }
-
 }

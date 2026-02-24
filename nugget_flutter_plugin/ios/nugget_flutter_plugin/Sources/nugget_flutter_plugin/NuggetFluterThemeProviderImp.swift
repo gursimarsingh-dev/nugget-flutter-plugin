@@ -44,4 +44,8 @@ final class NuggetFluterThemeProviderImp: NuggetThemeProviderDelegate {
             self.deviceInterfaceStyle = .unspecified
         }
     }
+
+    func updateDeviceInterfaceStyle(_ interfaceStyle: UIUserInterfaceStyle) {
+        self.deviceInterfaceStyle = interfaceStyle
+    }
 }
